@@ -6,6 +6,7 @@ from docx import Document
 doc1 = Document('../linux應用_v9.75.doc')
 #print(f'Doc={Doc}')
 
+#列出所有大綱
 for paragraph in doc1.paragraphs:
-    parStr = paragraph.text
-    print(f'parStr={parStr}')
+    print(f'大綱階層為：{paragraph.style.name}')
+    print(f'內文為：{paragraph.text}')
