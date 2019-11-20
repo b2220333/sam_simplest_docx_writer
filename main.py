@@ -20,29 +20,29 @@ root.title('sam的Word處理器')
 
 #千萬別加show='headings'，否則會縮小到看不到展開的+號
 #tree = ttk.Treeview(root, columns=['1'], show='headings')
-tree = ttk.Treeview(root, columns=['one','two'])
+tree = ttk.Treeview(root, columns=['欄位ID 1','欄位ID 2'])
 
 #anchor='center'表示置中對齊
 #tree.column('1', width=100, anchor='center')
 #tree.heading('1', text='大綱')
 #tree["columns"]=("one","two")
-tree.column("one", width=100)
-tree.column("two", width=100)
-tree.heading("one", text="coulmn A")
-tree.heading("two", text="column B")
+tree.column("欄位ID 1", width=100)
+tree.column("欄位ID 2", width=100)
+tree.heading("欄位ID 1", text="欄位文字1")
+tree.heading("欄位ID 2", text="欄位文字2")
 
-tree.insert("" , 0, text="Line 1", values=['山姆'])
+#第一階層-1
+#第二欄位表順序（0表最優先）
+tree.insert("" , 0,'階層1-1 ID', text="階層1-1文字", values=['a','b'])
 
-apple = tree.insert("", 1, "iamD", text="DDDDD")
-tree.insert(apple, "end","iamd", text="ddddd", values=['Tree'])
-
-#第一階層
-#hierarchy1 = tree.insert('', 'end', values=['山姆'])
+#第一階層-2
+apple = tree.insert("", 2, "階層1-2 ID", text="階層1-2文字")
 #第二階層
-#tree.insert(hierarchy1, 'end', values=['Tree'])
+tree.insert(apple, 0,"階層2-1 ID1", text="階層2-1文字a", values=['c','d'])
+tree.insert(apple, 1,"階層2-1 ID2", text="階層2-1文字b", values=['e','f'])
 
-#第一階層
-tree.insert('','end', values=['Canvas'])
+#第一階層-3
+tree.insert('',3,"階層1-3 ID", text="階層1-3文字", values=['g','h'])
 #tree.grid()
 tree.pack()
 root.mainloop()
