@@ -41,6 +41,14 @@ apple = tree.insert("", 2, "階層1-2 ID", text="階層1-2文字")
 tree.insert(apple, 0,"階層2-1 ID1", text="階層2-1文字a", values=['c','d'])
 tree.insert(apple, 1,"階層2-1 ID2", text="階層2-1文字b", values=['e','f'])
 
+from PIL import Image, ImageTk
+
+linux_img2 = Image.open('/home/sam/PycharmProjects/linux.png')
+linux_img2 = linux_img2.resize((30,30), Image.ANTIALIAS)
+linux_img2 = ImageTk.PhotoImage(linux_img2)
+tree.insert(apple, 3,"階層2-1 ID2 pic2", text='linux.png', open=True, image=linux_img2,
+                 value=['0','1'])
+
 #第一階層-3
 tree.insert('',3,"階層1-3 ID", text="階層1-3文字", values=['g','h'])
 #tree.grid()
