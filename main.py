@@ -74,8 +74,8 @@ for paragraph in doc1.paragraphs:
     #第2階會輸出：Heading 2
     #...
     #依此類推
-    #print(f'大綱階層為：{paragraph.style.name}')
-    #print(f'內文為：{paragraph.text}')
+    print(f'大綱階層為：{paragraph.style.name}')
+    print(f'內文為：{paragraph.text}')
     #開始取得Heading N的數字N
     #str[str.index(' ')+1:]
     if previous_level == 0:
@@ -85,12 +85,18 @@ for paragraph in doc1.paragraphs:
         ID = 1
     else:
         #表示目前至少有一個大綱
+        #但若得到的資訊是Normal則此奇怪欄位須跳過，因為也不會有任何內容
+        #若是Body Text也屬於內文範疇，所以在大綱方面應忽略
+        if paragraph.style.name == 'Normal' or paragraph.style.name == 'Body Text':
+            continue
         now_level = int(paragraph.style.name[paragraph.style.name.index(' ')+1:])
         if now_level > previous_level:
             #準備降階
             #tree.insert("", 0, '階層1-1 ID', text="階層1-1文字", values=['a', 'b'])
             var_level = tree.insert(var_level, ID, f'{ID}', text={paragraph.text}, values=['a', 'b'])
-        break
+            previous_level = now_level
+            ID = ID + 1
+        #break
 #tree.grid()
 tree.pack()
 root.mainloop()
