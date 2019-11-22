@@ -3,7 +3,7 @@
 
 #開啟docx（聽說不能開doc檔，但實際開好像沒問題XD）
 from docx import Document
-doc1 = Document('../linux應用_v9.75.doc')
+doc1 = Document('../linux應用_v9.77.doc')
 #print(f'Doc={Doc}')
 
 #列出所有大綱
@@ -74,14 +74,18 @@ for paragraph in doc1.paragraphs:
     #第2階會輸出：Heading 2
     #...
     #依此類推
-    print(f'大綱階層為：{paragraph.style.name}')
-    print(f'內文為：{paragraph.text}')
+    #print(f'大綱階層為：{paragraph.style.name}')
+    #print(f'內文為：{paragraph.text}')
+    #print(f'stack_var_level={stack_var_level}')
+    #print(f'previous_level={previous_level}')
+
     #開始取得Heading N的數字N
     #str[str.index(' ')+1:]
     if previous_level == 0:
         #表示目前大綱尚未建立任何內容
         var_level = tree.insert("", ID, f'{ID}', text={paragraph.text}, values=['a', 'b'])
         stack_var_level.append(var_level)
+        print(f'stack_var_level={stack_var_level}')
         previous_level = 1
         ID = 1
     else:
@@ -90,32 +94,58 @@ for paragraph in doc1.paragraphs:
         #若是Body Text也屬於內文範疇，所以在大綱方面應忽略
         if paragraph.style.name == 'Normal' or paragraph.style.name == 'Body Text':
             continue
+        print(f'大綱階層為：{paragraph.style.name}')
+        print(f'內文為：{paragraph.text}')
+        # print(f'stack_var_level={stack_var_level}')
+        print(f'previous_level={previous_level}')
+
         now_level = int(paragraph.style.name[paragraph.style.name.index(' ')+1:])
+        print(f'now_level={now_level}')
+#        if now_level == 2:
+#            print(f'大綱階層為：{paragraph.style.name}')
+#            print(f'內文為：{paragraph.text}')
+#            print(f'stack_var_level={stack_var_level}')
+
         if now_level > previous_level:
+            if now_level-previous_level != 1:
+                print('請修補文件為正確大綱階層（一次只能升一階或降一階）')
+                exit(-1)
             #準備降階
             #tree.insert("", 0, '階層1-1 ID', text="階層1-1文字", values=['a', 'b'])
-            var_level = tree.insert(var_level, ID, f'{ID}', text={paragraph.text}, values=['a', 'b'])
+            var_level = tree.insert(var_level, ID, f'{ID}', text=paragraph.style.name+':'+paragraph.text, values=['a', 'b'])
             stack_var_level.append(var_level)
+            print(f'stack_var_level={stack_var_level}')
             previous_level = now_level
             ID = ID + 1
         elif now_level == previous_level:
             #因為目前抓到同階層的，所以需要把前面同階層的變數丟棄
             #這樣才能抓到上一階層的來降階，才能夠產生正確的大綱
+            print('準備要pop')
             stack_var_level.pop()
-            var_level = tree.insert(stack_var_level[-1], ID, f'{ID}', text={paragraph.text}, values=['a', 'b'])
+            var_level = tree.insert(stack_var_level[-1], ID, f'{ID}', text=paragraph.style.name+':'+paragraph.text, values=['a', 'b'])
             #最後因為可能此階層也會有下一階，因此當然變數仍要push
             stack_var_level.append(var_level)
+            print(f'stack_var_level={stack_var_level}')
             previous_level = now_level
             ID = ID + 1
         elif now_level < previous_level:
+            if previous_level-now_level != 1:
+                print('請修補文件為正確大綱階層（一次只能升一階或降一階）')
+                exit(-1)
             #準備升階
             #pop一次可以建立同階層
+            print('準備要pop')
             stack_var_level.pop()
-            #pop二次可以建立升一階層
-            stack_var_level.pop()
-            var_level = tree.insert(stack_var_level[-1], ID, f'{ID}', text={paragraph.text}, values=['a', 'b'])
+            #<1要多pop共1次
+            #<2要多pop共2次
+            for _ in range(previous_level-now_level):
+                print('準備要pop')
+                stack_var_level.pop()
+            #print(f'stack_var_level={stack_var_level}')
+            var_level = tree.insert(stack_var_level[-1], ID, f'{ID}', text=paragraph.style.name+':'+paragraph.text, values=['a', 'b'])
             #最後因為可能此階層也會有下一階，因此當然變數仍要push
             stack_var_level.append(var_level)
+            print(f'stack_var_level={stack_var_level}')
             previous_level = now_level
             ID = ID + 1
 
