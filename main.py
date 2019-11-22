@@ -24,6 +24,14 @@ root = tkinter.Tk()
 root.title('sam的Word處理器')
 root.geometry("800x800")  # Width x Height
 
+#設定每列的高度
+style_Treeview = ttk.Style(root)
+style_Treeview.configure('Treeview', rowheight=40)
+
+style_Heading = ttk.Style()
+style_Heading.configure("Treeview.Heading", font=(None, 15))
+
+
 #千萬別加show='headings'，否則會縮小到看不到展開的+號
 #tree = ttk.Treeview(root, columns=['1'], show='headings')
 tree = ttk.Treeview(root, columns=['欄位ID 1','欄位ID 2'], height=40)
