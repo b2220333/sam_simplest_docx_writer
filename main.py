@@ -22,10 +22,11 @@ from tkinter import ttk
 
 root = tkinter.Tk()
 root.title('sam的Word處理器')
+root.geometry("800x800")  # Width x Height
 
 #千萬別加show='headings'，否則會縮小到看不到展開的+號
 #tree = ttk.Treeview(root, columns=['1'], show='headings')
-tree = ttk.Treeview(root, columns=['欄位ID 1','欄位ID 2'])
+tree = ttk.Treeview(root, columns=['欄位ID 1','欄位ID 2'], height=40)
 
 #anchor='center'表示置中對齊
 #tree.column('1', width=100, anchor='center')
