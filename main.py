@@ -68,7 +68,7 @@ ID = 0
 #取得所有大綱
 #先建立特殊的首個第一階層
 previous_level = 0
-var_level = None
+stack_var_level = []
 for paragraph in doc1.paragraphs:
     #第1階會輸出：Heading 1
     #第2階會輸出：Heading 2
@@ -81,6 +81,7 @@ for paragraph in doc1.paragraphs:
     if previous_level == 0:
         #表示目前大綱尚未建立任何內容
         var_level = tree.insert("", ID, f'{ID}', text={paragraph.text}, values=['a', 'b'])
+        stack_var_level.append(var_level)
         previous_level = 1
         ID = 1
     else:
@@ -94,8 +95,19 @@ for paragraph in doc1.paragraphs:
             #準備降階
             #tree.insert("", 0, '階層1-1 ID', text="階層1-1文字", values=['a', 'b'])
             var_level = tree.insert(var_level, ID, f'{ID}', text={paragraph.text}, values=['a', 'b'])
+            stack_var_level.append(var_level)
             previous_level = now_level
             ID = ID + 1
+        elif now_level == previous_level:
+            #因為目前抓到同階層的，所以需要把前面同階層的變數丟棄
+            #這樣才能抓到上一階層的來降階，才能夠產生正確的大綱
+            stack_var_level.pop()
+            var_level = tree.insert(stack_var_level[-1], ID, f'{ID}', text={paragraph.text}, values=['a', 'b'])
+            #最後因為可能此階層也會有下一階，因此當然變數仍要push
+            stack_var_level.append(var_level)
+            previous_level = now_level
+            ID = ID + 1
+
         #break
 #tree.grid()
 tree.pack()
