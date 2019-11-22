@@ -107,6 +107,17 @@ for paragraph in doc1.paragraphs:
             stack_var_level.append(var_level)
             previous_level = now_level
             ID = ID + 1
+        elif now_level < previous_level:
+            #準備升階
+            #pop一次可以建立同階層
+            stack_var_level.pop()
+            #pop二次可以建立升一階層
+            stack_var_level.pop()
+            var_level = tree.insert(stack_var_level[-1], ID, f'{ID}', text={paragraph.text}, values=['a', 'b'])
+            #最後因為可能此階層也會有下一階，因此當然變數仍要push
+            stack_var_level.append(var_level)
+            previous_level = now_level
+            ID = ID + 1
 
         #break
 #tree.grid()
