@@ -27,7 +27,7 @@ root.geometry("800x800")  # Width x Height
 #設定每列的高度
 style_Treeview = ttk.Style(root)
 style_Treeview.configure('Treeview', rowheight=40)
-
+#設定欄位文字大小
 style_Heading = ttk.Style()
 style_Heading.configure("Treeview.Heading", font=(None, 15))
 
@@ -84,7 +84,7 @@ for paragraph in doc1.paragraphs:
     #...
     #依此類推
     #print(f'大綱階層為：{paragraph.style.name}')
-    #print(f'內文為：{paragraph.text}')
+    #print(f'階層標題為：{paragraph.text}')
     #print(f'stack_var_level={stack_var_level}')
     #print(f'previous_level={previous_level}')
 
@@ -92,7 +92,7 @@ for paragraph in doc1.paragraphs:
     #str[str.index(' ')+1:]
     if previous_level == 0:
         #表示目前大綱尚未建立任何內容
-        var_level = tree.insert("", ID, f'{ID}', text={paragraph.text}, values=['a', 'b'])
+        var_level = tree.insert("", ID, f'{ID}', text={paragraph.text}, values=[paragraph.text, 'b'])
         stack_var_level.append(var_level)
         print(f'stack_var_level={stack_var_level}')
         previous_level = 1
@@ -102,6 +102,7 @@ for paragraph in doc1.paragraphs:
         #但若得到的資訊是Normal則此奇怪欄位須跳過，因為也不會有任何內容
         #若是Body Text也屬於內文範疇，所以在大綱方面應忽略
         if paragraph.style.name == 'Normal' or paragraph.style.name == 'Body Text':
+            print(f'階層內文為：{paragraph.text}')
             continue
         print(f'大綱階層為：{paragraph.style.name}')
         print(f'內文為：{paragraph.text}')
@@ -121,7 +122,7 @@ for paragraph in doc1.paragraphs:
                 exit(-1)
             #準備降階
             #tree.insert("", 0, '階層1-1 ID', text="階層1-1文字", values=['a', 'b'])
-            var_level = tree.insert(var_level, ID, f'{ID}', text=paragraph.style.name+':'+paragraph.text, values=['a', 'b'])
+            var_level = tree.insert(var_level, ID, f'{ID}', text=paragraph.style.name+':'+paragraph.text, values=[paragraph.text, 'b'])
             stack_var_level.append(var_level)
             print(f'stack_var_level={stack_var_level}')
             previous_level = now_level
@@ -131,7 +132,7 @@ for paragraph in doc1.paragraphs:
             #這樣才能抓到上一階層的來降階，才能夠產生正確的大綱
             print('準備要pop')
             stack_var_level.pop()
-            var_level = tree.insert(stack_var_level[-1], ID, f'{ID}', text=paragraph.style.name+':'+paragraph.text, values=['a', 'b'])
+            var_level = tree.insert(stack_var_level[-1], ID, f'{ID}', text=paragraph.style.name+':'+paragraph.text, values=[paragraph.text, 'b'])
             #最後因為可能此階層也會有下一階，因此當然變數仍要push
             stack_var_level.append(var_level)
             print(f'stack_var_level={stack_var_level}')
@@ -151,7 +152,7 @@ for paragraph in doc1.paragraphs:
                 print('準備要pop')
                 stack_var_level.pop()
             #print(f'stack_var_level={stack_var_level}')
-            var_level = tree.insert(stack_var_level[-1], ID, f'{ID}', text=paragraph.style.name+':'+paragraph.text, values=['a', 'b'])
+            var_level = tree.insert(stack_var_level[-1], ID, f'{ID}', text=paragraph.style.name+':'+paragraph.text, values=[paragraph.text, 'b'])
             #最後因為可能此階層也會有下一階，因此當然變數仍要push
             stack_var_level.append(var_level)
             print(f'stack_var_level={stack_var_level}')
