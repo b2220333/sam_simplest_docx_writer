@@ -19,10 +19,16 @@ doc1 = Document('../linux應用_v9.77.doc')
 #建立Tkinter GUI
 import tkinter
 from tkinter import ttk
+from tkinter import *
 
 root = tkinter.Tk()
 root.title('sam的Word處理器')
 root.geometry("800x800")  # Width x Height
+
+#建立左側欄位
+frame1 = Frame(root)
+frame1.pack(side=LEFT)
+
 
 #設定每列的高度
 style_Treeview = ttk.Style(root)
@@ -78,6 +84,13 @@ ID = 0
 #先建立特殊的首個第一階層
 previous_level = 0
 stack_var_level = []
+
+#內文
+g_body_text = ''
+
+#圖片
+g_image = ''
+
 for paragraph in doc1.paragraphs:
     #第1階會輸出：Heading 1
     #第2階會輸出：Heading 2
@@ -103,9 +116,10 @@ for paragraph in doc1.paragraphs:
         #若是Body Text也屬於內文範疇，所以在大綱方面應忽略
         if paragraph.style.name == 'Normal' or paragraph.style.name == 'Body Text':
             print(f'階層內文為：{paragraph.text}')
+            g_body_text = g_body_text + paragraph.text
             continue
         print(f'大綱階層為：{paragraph.style.name}')
-        print(f'內文為：{paragraph.text}')
+        print(f'階層標題為：{paragraph.text}')
         # print(f'stack_var_level={stack_var_level}')
         print(f'previous_level={previous_level}')
 
@@ -161,5 +175,17 @@ for paragraph in doc1.paragraphs:
 
         #break
 #tree.grid()
-tree.pack()
+#tree.pack()
+tree.pack(side=LEFT)
+
+#######################################################################################
+#建立右側欄位
+frame2 = Frame(root)
+frame2.pack(side=RIGHT)
+
+text = Text(root, height=200, width=200)
+text.pack(side=LEFT, fill=Y, expand=True)
+scrollbar = Scrollbar(root, orient="vertical")
+scrollbar.config(command=text.yview)
+scrollbar.pack(side=RIGHT, fill=Y, expand=True)
 root.mainloop()
