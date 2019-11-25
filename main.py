@@ -88,16 +88,17 @@ previous_level = 0
 stack_var_level = []
 
 #內文
-g_body_text = ''
+g_body_text = []
 
 #圖片
-g_image = ''
+g_image = []
 
 for paragraph in doc1.paragraphs:
     #第1階會輸出：Heading 1
     #第2階會輸出：Heading 2
     #...
     #依此類推
+    print('-----------------------------------------')
     #print(f'大綱階層為：{paragraph.style.name}')
     #print(f'階層標題為：{paragraph.text}')
     #print(f'stack_var_level={stack_var_level}')
@@ -113,13 +114,20 @@ for paragraph in doc1.paragraphs:
         print(f'stack_var_level={stack_var_level}')
         previous_level = 1
         ID = 1
+        # 每抓到一個paragraph就要在g_body_text多新增一個內容
+        # 才不會要儲存某個ID的內文時發現沒有空間可存
+        g_body_text.append('')
+        print(f'len(g_body_text)={len(g_body_text)}')
     else:
         #表示目前至少有一個大綱
         #但若得到的資訊是Normal則此奇怪欄位須跳過，因為也不會有任何內容
         #若是Body Text也屬於內文範疇，所以在大綱方面應忽略
         if paragraph.style.name == 'Normal' or paragraph.style.name == 'Body Text':
             print(f'階層內文為：{paragraph.text}')
-            g_body_text = g_body_text + paragraph.text
+            #因為一定有大綱才有內文，因此也一定先建立了g_body_text
+            #所以只須將body的文字全部存入到g_body_text[-1]中即可。
+            g_body_text[-1] = g_body_text[-1] + paragraph.text + '\n'
+            print(f'g_body_text[-1]={g_body_text[-1]}')
             continue
         print(f'大綱階層為：{paragraph.style.name}')
         print(f'階層標題為：{paragraph.text}')
@@ -145,6 +153,11 @@ for paragraph in doc1.paragraphs:
             print(f'stack_var_level={stack_var_level}')
             previous_level = now_level
             ID = ID + 1
+            # 每抓到一個paragraph就要在g_body_text多新增一個內容
+            # 才不會要儲存某個ID的內文時發現沒有空間可存
+            g_body_text.append('')
+            print(f'len(g_body_text)={len(g_body_text)}')
+
         elif now_level == previous_level:
             #因為目前抓到同階層的，所以需要把前面同階層的變數丟棄
             #這樣才能抓到上一階層的來降階，才能夠產生正確的大綱
@@ -157,6 +170,11 @@ for paragraph in doc1.paragraphs:
             print(f'stack_var_level={stack_var_level}')
             previous_level = now_level
             ID = ID + 1
+            # 每抓到一個paragraph就要在g_body_text多新增一個內容
+            # 才不會要儲存某個ID的內文時發現沒有空間可存
+            g_body_text.append('')
+            print(f'len(g_body_text)={len(g_body_text)}')
+
         elif now_level < previous_level:
             if previous_level-now_level != 1:
                 print('請修補文件為正確大綱階層（一次只能升一階或降一階）')
@@ -178,11 +196,25 @@ for paragraph in doc1.paragraphs:
             print(f'stack_var_level={stack_var_level}')
             previous_level = now_level
             ID = ID + 1
+            # 每抓到一個paragraph就要在g_body_text多新增一個內容
+            # 才不會要儲存某個ID的內文時發現沒有空間可存
+            g_body_text.append('')
+            print(f'len(g_body_text)={len(g_body_text)}')
 
         #break
 #tree.grid()
 #tree.pack()
 tree.pack(side=LEFT)
+
+def treeviewClick(event):  # 單擊
+    print(f'單擊ID{tree.selection()[0]}')
+    #for item in tree.selection():
+    #    item_text = tree.item(item, "values")
+    #    print(item_text[0])  # 輸出所選行的第一列的值
+
+
+tree.bind('<ButtonRelease-1>', treeviewClick)  # 綁定單擊離開事件===========
+
 
 #######################################################################################
 #建立右側欄位
@@ -190,10 +222,12 @@ frame2 = Frame(root)
 frame2.pack(side=RIGHT)
 
 text = Text(root, width=80)
+
 #讓text靠左
 text.pack(side=LEFT, fill=Y, expand=True)
 scrollbar = Scrollbar(root, orient="vertical")
 scrollbar.config(command=text.yview)
 #讓捲軸靠右
 scrollbar.pack(side=RIGHT, fill=Y, expand=True)
+
 root.mainloop()
