@@ -40,16 +40,17 @@ style_Heading.configure("Treeview.Heading", font=(None, 15))
 
 #千萬別加show='headings'，否則會縮小到看不到展開的+號
 #tree = ttk.Treeview(root, columns=['1'], show='headings')
-tree = ttk.Treeview(root, columns=['欄位ID 1','欄位ID 2'], height=40)
+#tree = ttk.Treeview(root, columns=['欄位ID 1','欄位ID 2'], height=40)
+tree = ttk.Treeview(root, height=40)
 
 #anchor='center'表示置中對齊
 #tree.column('1', width=100, anchor='center')
 #tree.heading('1', text='大綱')
 #tree["columns"]=("one","two")
-tree.column("欄位ID 1", width=100)
-tree.column("欄位ID 2", width=100)
-tree.heading("欄位ID 1", text="欄位文字1")
-tree.heading("欄位ID 2", text="欄位文字2")
+#tree.column("欄位ID 1", width=100)
+#tree.column("欄位ID 2", width=100)
+#tree.heading("欄位ID 1", text="欄位文字1")
+#tree.heading("欄位ID 2", text="欄位文字2")
 
 """
 #第一階層-1
@@ -105,7 +106,8 @@ for paragraph in doc1.paragraphs:
     #str[str.index(' ')+1:]
     if previous_level == 0:
         #表示目前大綱尚未建立任何內容
-        var_level = tree.insert("", ID, f'{ID}', text={paragraph.text}, values=[paragraph.text, 'b'])
+        #var_level = tree.insert("", ID, f'{ID}', text={paragraph.text}, values=[paragraph.text, 'b'])
+        var_level = tree.insert("", ID, f'{ID}', text={paragraph.text})
         stack_var_level.append(var_level)
         print(f'stack_var_level={stack_var_level}')
         previous_level = 1
@@ -136,7 +138,8 @@ for paragraph in doc1.paragraphs:
                 exit(-1)
             #準備降階
             #tree.insert("", 0, '階層1-1 ID', text="階層1-1文字", values=['a', 'b'])
-            var_level = tree.insert(var_level, ID, f'{ID}', text=paragraph.style.name+':'+paragraph.text, values=[paragraph.text, 'b'])
+            #var_level = tree.insert(var_level, ID, f'{ID}', text=paragraph.style.name+':'+paragraph.text, values=[paragraph.text, 'b'])
+            var_level = tree.insert(var_level, ID, f'{ID}', text=paragraph.style.name + ':' + paragraph.text)
             stack_var_level.append(var_level)
             print(f'stack_var_level={stack_var_level}')
             previous_level = now_level
@@ -146,7 +149,8 @@ for paragraph in doc1.paragraphs:
             #這樣才能抓到上一階層的來降階，才能夠產生正確的大綱
             print('準備要pop')
             stack_var_level.pop()
-            var_level = tree.insert(stack_var_level[-1], ID, f'{ID}', text=paragraph.style.name+':'+paragraph.text, values=[paragraph.text, 'b'])
+            #var_level = tree.insert(stack_var_level[-1], ID, f'{ID}', text=paragraph.style.name+':'+paragraph.text, values=[paragraph.text, 'b'])
+            var_level = tree.insert(stack_var_level[-1], ID, f'{ID}', text=paragraph.style.name + ':' + paragraph.text)
             #最後因為可能此階層也會有下一階，因此當然變數仍要push
             stack_var_level.append(var_level)
             print(f'stack_var_level={stack_var_level}')
@@ -166,7 +170,8 @@ for paragraph in doc1.paragraphs:
                 print('準備要pop')
                 stack_var_level.pop()
             #print(f'stack_var_level={stack_var_level}')
-            var_level = tree.insert(stack_var_level[-1], ID, f'{ID}', text=paragraph.style.name+':'+paragraph.text, values=[paragraph.text, 'b'])
+            #var_level = tree.insert(stack_var_level[-1], ID, f'{ID}', text=paragraph.style.name+':'+paragraph.text, values=[paragraph.text, 'b'])
+            var_level = tree.insert(stack_var_level[-1], ID, f'{ID}', text=paragraph.style.name + ':' + paragraph.text)
             #最後因為可能此階層也會有下一階，因此當然變數仍要push
             stack_var_level.append(var_level)
             print(f'stack_var_level={stack_var_level}')
