@@ -3,7 +3,7 @@
 
 #開啟docx（聽說不能開doc檔，但實際開好像沒問題XD）
 from docx import Document
-doc1 = Document('../linux應用_v9.77.doc')
+doc1 = Document('../linux應用_v9.75_simple.doc')
 #print(f'Doc={Doc}')
 
 #列出所有大綱
@@ -23,7 +23,7 @@ from tkinter import *
 
 root = tkinter.Tk()
 root.title('sam的Word處理器')
-root.geometry("800x800")  # Width x Height
+root.geometry("1200x800")  # Width x Height
 
 #建立左側欄位
 frame1 = Frame(root)
@@ -38,11 +38,12 @@ style_Heading = ttk.Style()
 style_Heading.configure("Treeview.Heading", font=(None, 15))
 
 
+
 #千萬別加show='headings'，否則會縮小到看不到展開的+號
 #tree = ttk.Treeview(root, columns=['1'], show='headings')
 #tree = ttk.Treeview(root, columns=['欄位ID 1','欄位ID 2'], height=40)
 tree = ttk.Treeview(root, height=40)
-
+tree.column("#0",minwidth=0,width=500)
 #anchor='center'表示置中對齊
 #tree.column('1', width=100, anchor='center')
 #tree.heading('1', text='大綱')
@@ -188,9 +189,11 @@ tree.pack(side=LEFT)
 frame2 = Frame(root)
 frame2.pack(side=RIGHT)
 
-text = Text(root, height=200, width=200)
+text = Text(root, width=80)
+#讓text靠左
 text.pack(side=LEFT, fill=Y, expand=True)
 scrollbar = Scrollbar(root, orient="vertical")
 scrollbar.config(command=text.yview)
+#讓捲軸靠右
 scrollbar.pack(side=RIGHT, fill=Y, expand=True)
 root.mainloop()
