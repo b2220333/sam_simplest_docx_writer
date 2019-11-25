@@ -206,14 +206,6 @@ for paragraph in doc1.paragraphs:
 #tree.pack()
 tree.pack(side=LEFT)
 
-def treeviewClick(event):  # 單擊
-    print(f'單擊ID{tree.selection()[0]}')
-    #for item in tree.selection():
-    #    item_text = tree.item(item, "values")
-    #    print(item_text[0])  # 輸出所選行的第一列的值
-
-
-tree.bind('<ButtonRelease-1>', treeviewClick)  # 綁定單擊離開事件===========
 
 
 #######################################################################################
@@ -229,5 +221,23 @@ scrollbar = Scrollbar(root, orient="vertical")
 scrollbar.config(command=text.yview)
 #讓捲軸靠右
 scrollbar.pack(side=RIGHT, fill=Y, expand=True)
+
+################################事件處理############################
+
+def treeviewClick(event):  # 單擊
+    now_ID = int(tree.selection()[0])
+    print(f'單擊ID{now_ID}')
+    print(f'該大綱的內文為：{g_body_text[now_ID]}')
+    #text.insert('insert', 'Hello sam!!')
+    #先清空文字框
+    text.delete('1.0', END)
+    #再加入目前大綱中的文字
+    text.insert('insert', g_body_text[now_ID])
+    #for item in tree.selection():
+    #    item_text = tree.item(item, "values")
+    #    print(item_text[0])  # 輸出所選行的第一列的值
+
+
+tree.bind('<ButtonRelease-1>', treeviewClick)  # 綁定單擊離開事件===========
 
 root.mainloop()
