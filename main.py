@@ -92,6 +92,12 @@ g_body_text = []
 
 #圖片
 g_image = []
+g_image_index = 0
+
+import re
+from os.path import basename
+
+pattern = re.compile('rId\d+')
 
 for paragraph in doc1.paragraphs:
     #第1階會輸出：Heading 1
@@ -123,11 +129,46 @@ for paragraph in doc1.paragraphs:
         #但若得到的資訊是Normal則此奇怪欄位須跳過，因為也不會有任何內容
         #若是Body Text也屬於內文範疇，所以在大綱方面應忽略
         if paragraph.style.name == 'Normal' or paragraph.style.name == 'Body Text':
-            print(f'階層內文為：{paragraph.text}')
-            #因為一定有大綱才有內文，因此也一定先建立了g_body_text
-            #所以只須將body的文字全部存入到g_body_text[-1]中即可。
-            g_body_text[-1] = g_body_text[-1] + paragraph.text + '\n'
-            print(f'g_body_text[-1]={g_body_text[-1]}')
+            if paragraph.text!= '':
+                #不是空字串就可以正常顯示出來
+                print(f'階層內文為：{paragraph.text}')
+                #因為一定有大綱才有內文，因此也一定先建立了g_body_text
+                #所以只須將body的文字全部存入到g_body_text[-1]中即可。
+                g_body_text[-1] = g_body_text[-1] + paragraph.text + '\n'
+                print(f'g_body_text[-1]={g_body_text[-1]}')
+            else:
+                #若是空字串表示抓到的是不一定是圖，也有可能是超連結（目前程式不處理非文字和圖和超連結之外的結構如表格）
+                local_image_list1 = list()
+                #實做方式很複雜，必須深入xml層去抓影像資料才行（所以須先透過run來偵測）
+                for run in paragraph.runs:
+                    if run.text != '':
+                        local_image_list1.append(run.text)
+                    else:
+                        # b.append(pattern.search(run.element.xml))
+                        contentID = pattern.search(run.element.xml).group(0)
+                        try:
+                            contentType = doc1.part.related_parts[contentID].content_type
+                        except KeyError as e:
+                            print(e)
+                            continue
+                        if not contentType.startswith('image'):
+                            continue
+                        imgName = basename(doc1.part.related_parts[contentID].partname)
+                        imgData = doc1.part.related_parts[contentID].blob
+                        local_image_list1.append(imgData)
+                if local_image_list1!=[]:
+                    #不是空表示有抓到圖
+                    print(f'準備顯示第{g_image_index}張圖！')
+                    #for image in doc1.inline_shapes:
+                        #print(f'影像寬度為{image.width},影像高度為{image.height}')
+                    print(f'影像寬度為{doc1.inline_shapes[g_image_index].width}')
+                    print(f'影像高度為{doc1.inline_shapes[g_image_index].height}')
+                    g_image_index = g_image_index+1
+                else:
+                    #此時發現是空，表示此處沒有圖
+                    #目前暫不處理超連結
+                    print('***********此處既不是文字也非圖，那就有可能是超連結了！**************')
+                    pass
             continue
         print(f'大綱階層為：{paragraph.style.name}')
         print(f'階層標題為：{paragraph.text}')
