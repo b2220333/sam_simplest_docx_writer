@@ -90,14 +90,25 @@ stack_var_level = []
 #內文
 g_body_text = []
 
-#圖片
+
+#此處是用來parse 底層docx的xml來抓出圖片用
 g_image = []
 g_image_index = 0
-
 import re
 from os.path import basename
-
 pattern = re.compile('rId\d+')
+
+#此處是用來抓出超連結
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
+g_hyperlink_index = 0
+#取得所有超連結
+all_hyperlinks=[]
+rels = doc1.part.rels
+for rel in rels:
+    print(f'rel={rel}')
+    if rels[rel].reltype == RT.HYPERLINK:
+        print("\n 超連結的id為", rel, "，超連結為", rels[rel]._target)
+        all_hyperlinks.append(rels[rel]._target)
 
 for paragraph in doc1.paragraphs:
     #第1階會輸出：Heading 1
@@ -142,12 +153,15 @@ for paragraph in doc1.paragraphs:
                 #實做方式很複雜，必須深入xml層去抓影像資料才行（所以須先透過run來偵測）
                 for run in paragraph.runs:
                     if run.text != '':
+                        print(f'run.text={run.text}')
                         local_image_list1.append(run.text)
                     else:
+                        print(f'run.text={run.text}')
                         # b.append(pattern.search(run.element.xml))
                         contentID = pattern.search(run.element.xml).group(0)
                         try:
                             contentType = doc1.part.related_parts[contentID].content_type
+                            print(f'contentType={contentType}')
                         except KeyError as e:
                             print(e)
                             continue
@@ -167,8 +181,11 @@ for paragraph in doc1.paragraphs:
                 else:
                     #此時發現是空，表示此處沒有圖
                     #目前暫不處理超連結
-                    print('***********此處既不是文字也非圖，那就有可能是超連結了！**************')
-                    pass
+                    print('***********此處既不是文字也非圖，那就假設是超連結吧！**************')
+                    #試著印出超連結
+                    print(f'超連結為{all_hyperlinks[g_hyperlink_index]}')
+                    g_hyperlink_index += 1
+                    #pass
             continue
         print(f'大綱階層為：{paragraph.style.name}')
         print(f'階層標題為：{paragraph.text}')
