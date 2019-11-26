@@ -180,11 +180,15 @@ for paragraph in doc1.paragraphs:
                     g_image_index = g_image_index+1
                 else:
                     #此時發現是空，表示此處沒有圖
-                    #目前暫不處理超連結
                     print('***********此處既不是文字也非圖，那就假設是超連結吧！**************')
                     #試著印出超連結
                     print(f'超連結為{all_hyperlinks[g_hyperlink_index]}')
                     g_hyperlink_index += 1
+                    #目前假設超連結也屬於內文的一部分，因此作法比照內文方式處理
+                    #因為一定有大綱才有內文，因此也一定先建立了g_body_text
+                    #所以只須將body的文字全部存入到g_body_text[-1]中即可。
+                    g_body_text[-1] = g_body_text[-1] + paragraph.text + '\n'
+                    print(f'g_body_text[-1]={g_body_text[-1]}')
                     #pass
             continue
         print(f'大綱階層為：{paragraph.style.name}')
