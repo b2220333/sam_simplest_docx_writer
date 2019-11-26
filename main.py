@@ -23,7 +23,7 @@ from tkinter import *
 
 root = tkinter.Tk()
 root.title('sam的Word處理器')
-root.geometry("1200x800")  # Width x Height
+root.geometry("1500x800")  # Width x Height
 
 #建立左側欄位
 frame1 = Frame(root)
@@ -92,6 +92,7 @@ g_body_text = []
 
 
 #此處是用來parse 底層docx的xml來抓出圖片用
+from PIL import Image, ImageTk
 g_image = []
 g_image_index = 0
 import re
@@ -171,13 +172,15 @@ for paragraph in doc1.paragraphs:
                         imgData = doc1.part.related_parts[contentID].blob
                         local_image_list1.append(imgData)
                 if local_image_list1!=[]:
-                    #不是空表示有抓到圖
-                    print(f'準備顯示第{g_image_index}張圖！')
-                    #for image in doc1.inline_shapes:
-                        #print(f'影像寬度為{image.width},影像高度為{image.height}')
-                    print(f'影像寬度為{doc1.inline_shapes[g_image_index].width}')
-                    print(f'影像高度為{doc1.inline_shapes[g_image_index].height}')
-                    g_image_index = g_image_index+1
+                    #因為每個paragraph可能有多張圖，因此需要一一列印
+                    for image_data in local_image_list1:
+                        #不是空表示有抓到圖
+                        print(f'準備顯示第{g_image_index}張圖！')
+                        #for image in doc1.inline_shapes:
+                            #print(f'影像寬度為{image.width},影像高度為{image.height}')
+                        print(f'影像寬度為{doc1.inline_shapes[g_image_index].width}')
+                        print(f'影像高度為{doc1.inline_shapes[g_image_index].height}')
+                        g_image_index = g_image_index+1
                 else:
                     #此時發現是空，表示此處沒有圖
                     print('***********此處既不是文字也非圖，那就假設是超連結吧！**************')
@@ -283,6 +286,14 @@ scrollbar = Scrollbar(root, orient="vertical")
 scrollbar.config(command=text.yview)
 #讓捲軸靠右
 scrollbar.pack(side=RIGHT, fill=Y, expand=True)
+
+#在此假設每個paragraph只有一張圖
+l1=Label(root)
+linux_img2 = Image.open('/home/sam/PycharmProjects/linux.png')
+linux_img2 = linux_img2.resize((100,100), Image.ANTIALIAS)
+linux_img2 = ImageTk.PhotoImage(linux_img2)
+l1.config(image=linux_img2)
+l1.pack(side=RIGHT)
 
 ################################事件處理############################
 
