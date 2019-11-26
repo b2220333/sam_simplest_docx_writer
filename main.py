@@ -93,7 +93,9 @@ g_body_text = []
 
 #此處是用來parse 底層docx的xml來抓出圖片用
 from PIL import Image, ImageTk
-g_image = []
+#在此建立一個image list
+#沒用到時就清空
+g_image_label_list = []
 g_image_index = 0
 import re
 from os.path import basename
@@ -175,11 +177,12 @@ for paragraph in doc1.paragraphs:
                     #因為每個paragraph可能有多張圖，因此需要一一列印
                     for image_data in local_image_list1:
                         #不是空表示有抓到圖
-                        print(f'準備顯示第{g_image_index}張圖！')
+                        print(f'準備顯示第{g_image_index}張圖的metadata！')
                         #for image in doc1.inline_shapes:
                             #print(f'影像寬度為{image.width},影像高度為{image.height}')
                         print(f'影像寬度為{doc1.inline_shapes[g_image_index].width}')
                         print(f'影像高度為{doc1.inline_shapes[g_image_index].height}')
+
                         g_image_index = g_image_index+1
                 else:
                     #此時發現是空，表示此處沒有圖
@@ -287,13 +290,14 @@ scrollbar.config(command=text.yview)
 #讓捲軸靠右
 scrollbar.pack(side=RIGHT, fill=Y, expand=True)
 
-#在此假設每個paragraph只有一張圖
-l1=Label(root)
-linux_img2 = Image.open('/home/sam/PycharmProjects/linux.png')
-linux_img2 = linux_img2.resize((100,100), Image.ANTIALIAS)
-linux_img2 = ImageTk.PhotoImage(linux_img2)
-l1.config(image=linux_img2)
-l1.pack(side=RIGHT)
+#label_1=Label(root)
+#linux_img2 = Image.open('/home/sam/PycharmProjects/linux.png')
+#linux_img2 = linux_img2.resize((100,100), Image.ANTIALIAS)
+#linux_img2 = ImageTk.PhotoImage(linux_img2)
+#label_1.config(image=linux_img2)
+#label_1.pack(side=RIGHT)
+#g_image_label_list.append(label_1)
+
 
 ################################事件處理############################
 
@@ -309,6 +313,16 @@ def treeviewClick(event):  # 單擊
     #for item in tree.selection():
     #    item_text = tree.item(item, "values")
     #    print(item_text[0])  # 輸出所選行的第一列的值
+
+    #把圖片放到單擊時才產生（但未實做成功）
+    #用label來顯示圖片
+    label_1 = Label(root)
+    linux_img2 = Image.open('/home/sam/PycharmProjects/linux.png')
+    linux_img2 = linux_img2.resize((100, 100), Image.ANTIALIAS)
+    linux_img2 = ImageTk.PhotoImage(linux_img2)
+    label_1.config(image=linux_img2)
+    label_1.pack(side=RIGHT)
+    g_image_label_list.append(label_1)
 
 
 tree.bind('<ButtonRelease-1>', treeviewClick)  # 綁定單擊離開事件===========
